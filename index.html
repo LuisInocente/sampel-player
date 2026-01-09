@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sample Player – Grid UI</title>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --ink:#0f172a;
+  --muted:#64748b;
+  --border:#dbe3f5;
+  --border2:#e9eefc;
+  --pill:#f7f9ff;
+  --pill2:#ffffff;
+
+  --blue:#3b82f6;
+  --shadow:0 18px 50px rgba(15,23,42,.06);
+
+  --radius:18px;
+  --radiusPill:999px;
+
+  --leftW:320px;
+  --fxW:320px;
+
+  --gridCols:16;          /* 4 maten x 4 steps */
+  --rowH:84px;
+
+  --cellH:58px;
+  --cellGap:10px;
+
+  --alt:rgba(59,130,246,.05);
+  --alt2:rgba(15,23,42,.03);
+
+  --barLine:rgba(59,130,246,.25);
+
+ --mix:#3b82f6;    /* blauw */
+  --fb:#7816f9;     /* paars */
+  --pitch:#f94316;  /* oranje */
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:1400px;
+  margin:0 auto;
+  padding:42px 22px 48px;
+}
+
+.fx.mix label{
+  color:var(--mix);
+}
+
+.fx.fb label{
+  color:var(--fb);
+}
+
+.fx.pitch label{
+  color:var(--pitch);
+}
+.fx.mix input[type="range"]{
+  accent-color:var(--mix);
+}
+
+.fx.fb input[type="range"]{
+  accent-color:var(--fb);
+}
+
+.fx.pitch input[type="range"]{
+  accent-color:var(--pitch);
+}
+.fx label{
+  font-weight:900;
+  font-size:11px;
+  letter-spacing:.3px;
+}
+
+/* ====== TOP CONTROLS ====== */
+.top{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:14px;
+}
+
+.cluster{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.pill{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 14px;
+  border-radius:var(--radiusPill);
+  border:1px solid var(--border);
+  background:var(--pill2);
+  box-shadow:0 10px 30px rgba(15,23,42,.04);
+}
+
+.pill .lbl{
+  font-weight:800;
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.2px;
+}
+
+.pill input[type="number"]{
+  width:64px;
+  border:0;
+  outline:0;
+  font-weight:900;
+  font-size:18px;
+  color:var(--ink);
+  background:transparent;
+}
+
+.btn{
+  height:44px;
+  padding:0 18px;
+  border-radius:14px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-weight:900;
+  font-size:16px;
+  color:var(--ink);
+  cursor:pointer;
+}
+
+.btn.primary{
+  background:var(--blue);
+  border-color:var(--blue);
+  color:#fff;
+}
+
+.btn.ghost{
+  color:#b6c1d8;
+  background:#fbfcff;
+}
+
+.btn:active{ transform:translateY(1px); }
+
+.pill .range{
+  width:260px;
+  accent-color:var(--blue);
+}
+
+
+/* ====== TABLE WRAP ====== */
+.board{
+  border:1px solid var(--border);
+  border-radius:22px;
+  overflow:hidden;
+  background:#fff;
+  box-shadow:var(--shadow);
+}
+
+/* header row (sounds + bar numbers) */
+.headerRow{
+  display:grid;
+  grid-template-columns: var(--leftW) 1fr var(--fxW);
+  border-bottom:1px solid var(--border);
+  background:#fff;
+}
+
+.hLeft{
+  padding:10px 16px;
+  border-right:1px solid var(--border);
+  font-size:12px;
+  color:var(--muted);
+  font-weight:900;
+}
+
+.hMid{
+  padding:10px 16px;
+  border-right:1px solid var(--border);
+}
+
+.hFx{
+  padding:10px 16px;
+  font-size:12px;
+  color:transparent; /* in screenshot: geen titel */
+}
+
+.bars{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:0;
+  font-weight:900;
+  font-size:12px;
+  color:var(--muted);
+}
+.bars span{
+  padding-left:6px;
+}
+
+/* rows */
+.row{
+  display:grid;
+  grid-template-columns: var(--leftW) 1fr var(--fxW);
+  min-height:var(--rowH);
+  border-bottom:1px solid var(--border2);
+}
+.row:last-child{ border-bottom:0; }
+
+/* ====== LEFT CELL (sound) ====== */
+.leftCell{
+  border-right:1px solid var(--border);
+  padding:16px;
+  display:grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows:auto auto;
+  gap:10px 12px;
+  align-items:center;
+}
+
+.soundLine{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:900;
+  letter-spacing:.2px;
+}
+.dot{
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  box-shadow: inset 0 0 0 2px rgba(15,23,42,.08);
+}
+
+.smallPills{
+  display:flex;
+  gap:8px;
+  align-items:center;
+}
+
+.sBtn{
+  height:28px;
+  padding:0 10px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#fff;
+  font-weight:900;
+  font-size:12px;
+  color:var(--ink);
+  cursor:pointer;
+  line-height:28px;
+}
+.sBtn.icon{
+  width:32px;
+  padding:0;
+  display:grid;
+  place-items:center;
+  font-weight:950;
+}
+.sBtn.disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
+.vol{
+  grid-column:1 / -1;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.vol input[type="range"]{
+  width:220px;
+  accent-color:#111;
+}
+
+/* ====== MID CELL (grid) ====== */
+.midCell{
+  border-right:1px solid var(--border);
+  padding:10px 16px;
+  display:flex;
+  align-items:center;
+}
+
+.grid{
+  width:100%;
+  display:grid;
+  grid-template-columns: repeat(var(--gridCols), 1fr);
+  gap:var(--cellGap);
+}
+
+.step{
+  height:var(--cellH);
+  border-radius:0;               /* screenshot: rechte vakken */
+  border:1px solid var(--border);
+  background:#fff;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+}
+.step:nth-child(odd){ background:var(--alt2); }
+
+/* maat scheiding: elke 4 steps een iets zichtbaardere lijn */
+.step:nth-child(4n+1)::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  box-shadow: inset 2px 0 0 var(--barLine);
+  pointer-events:none;
+}
+
+/* active */
+.step.on{
+  background:rgba(59,130,246,.22);
+  border-color:rgba(59,130,246,.55);
+}
+
+/* ====== FX CELL (right) ====== */
+.fxCell{
+  padding:16px;
+  display:flex;
+  align-items:center;
+}
+
+.fxRow{
+  width:100%;
+  display:grid;
+  grid-template-columns: 1fr;
+  gap:10px;
+  align-items:center;
+}
+
+.fx{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  justify-content:flex-start;
+}
+.fx label{
+  font-size:11px;
+  font-weight:900;
+  color:var(--ink);
+}
+.fx input[type="range"]{
+  width:100%;
+  accent-color:#111;
+}
+
+/* ====== RESPONSIVE (zonder scroll als mogelijk) ====== */
+@media (max-width: 1180px){
+  :root{ --leftW:300px; --fxW:290px; }
+  .fx input[type="range"]{ width:84px; }
+}
+
+@media (max-width: 980px){
+  .top{ flex-direction:column; align-items:stretch; }
+  .cluster{ justify-content:center; }
+  .pill .range{ width:220px; }
+}
+
+@media (max-width: 880px){
+  /* stack rows: left + mid + fx onder elkaar (zoals je eerder vroeg: geen horizontale scroll) */
+  .headerRow{ grid-template-columns:1fr; }
+  .hLeft, .hMid, .hFx{ border-right:0; }
+  .row{ grid-template-columns:1fr; }
+  .leftCell{ border-right:0; border-bottom:1px solid var(--border2); }
+  .midCell{ border-right:0; border-bottom:1px solid var(--border2); }
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="cluster">
+      <div class="pill">
+        <span class="lbl">BPM</span>
+        <input id="bpm" type="number" value="124" min="40" max="220">
+      </div>
+
+      <button id="play" class="btn primary">Play</button>
+      <button id="stop" class="btn ghost" disabled>Stop</button>
+      <button id="clear" class="btn">Clear</button>
+    </div>
+
+    <div class="cluster">
+      <div class="pill">
+        <span class="lbl">Volume</span>
+        <input id="master" class="range" type="range" min="0" max="1" step="0.01" value="0.85">
+      </div>
+    </div>
+  </div>
+
+  
+
+  <div class="board">
+    <div class="headerRow">
+      <div class="hLeft">Sounds</div>
+      <div class="hMid">
+        <div class="bars"><span>1</span><span>2</span><span>3</span><span>4</span></div>
+      </div>
+      <div class="hFx">&nbsp;</div>
+    </div>
+
+    <!-- ROWS -->
+    <div id="rows"></div>
+  </div>
+</div>
+
+<script>
+/* UI-only: rows bouwen + grid toggles (geen audio) */
+const colors = ["#fb7185","#a3e635","#60a5fa","#c084fc","#facc15"]; // zacht zoals screenshot vibe
+const rowsEl = document.getElementById("rows");
+const STEPS = 16;
+
+function makeRow(i){
+  const row = document.createElement("div");
+  row.className = "row";
+
+  row.innerHTML = `
+    <div class="leftCell">
+      <div class="soundLine">
+        <span class="dot" style="background:${colors[i]}"></span>
+        <span>Sound ${i+1}</span>
+      </div>
+
+      <div class="smallPills">
+        <button class="sBtn">2s</button>
+        <button class="sBtn icon disabled" title="Play (demo)"><span>▶</span></button>
+        <button class="sBtn icon disabled" title="Delete (demo)">×</button>
+      </div>
+
+      <div class="vol">
+        <input type="range" min="0" max="1" step="0.01" value="0.8">
+      </div>
+    </div>
+
+    <div class="midCell">
+      <div class="grid" data-row="${i}">
+        ${Array.from({length:STEPS}).map((_,s)=>`<div class="step" data-step="${s}"></div>`).join("")}
+      </div>
+    </div>
+
+    <div class="fxCell">
+     <div class="fx mix">
+  <label>Mix</label>
+  <input type="range">
+</div>
+
+<div class="fx fb">
+  <label>FB</label>
+  <input type="range">
+</div>
+
+<div class="fx pitch">
+  <label>Pitch</label>
+  <input type="range">
+</div>
+
+    </div>
+  `;
+  return row;
+}
+
+for(let i=0;i<5;i++) rowsEl.appendChild(makeRow(i));
+
+document.addEventListener("click",(e)=>{
+  if(e.target.classList.contains("step")){
+    e.target.classList.toggle("on");
+  }
+});
+
+document.getElementById("clear").addEventListener("click", ()=>{
+  document.querySelectorAll(".step.on").forEach(x=>x.classList.remove("on"));
+});
+</script>
+
+</body>
+</html>

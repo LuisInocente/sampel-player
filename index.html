@@ -7,233 +7,162 @@
 
 <style>
 :root{
-  --bg:#ffffff;
   --ink:#0f172a;
   --muted:#64748b;
   --border:#dbe3f5;
   --border2:#e9eefc;
-  --pill:#f7f9ff;
-  --pill2:#ffffff;
-
   --blue:#3b82f6;
   --shadow:0 18px 50px rgba(15,23,42,.06);
 
-  --radius:18px;
-  --radiusPill:999px;
-
   --leftW:320px;
-  --fxW:340px;           /* iets breder zodat Pitch nooit wegvalt */
+  --fxW:340px;
 
-  --gridCols:16;         /* 4 maten x 4 steps */
+  --gridCols:16;
   --rowH:84px;
-
   --cellH:58px;
   --cellGap:10px;
 
-  --alt2:rgba(15,23,42,.03);
+  --mix:#3b82f6;
+  --fb:#a855f7;
+  --pitch:#f97316;
 
-  --line:rgba(59,130,246,.28); /* dunne maatlijn kleur (subtiel) */
+  --bar1:#3b82f6;  /* blauw */
+  --bar2:#22c55e;  /* groen */
+  --bar3:#a855f7;  /* paars */
+  --bar4:#f97316;  /* oranje */
 
-  /* FX kleuren */
-  --mix:#3b82f6;     /* blauw */
-  --fb:#a855f7;      /* paars */
-  --pitch:#f97316;   /* oranje */
 }
-.fx input[type="range"]{
-  background:transparent; /* reset */
-}
-.fx input[type="range"]::-webkit-slider-runnable-track{
-  height:4px;
-  background:rgba(15,23,42,.12);
-  border-radius:999px;
-}
-
 
 *{box-sizing:border-box}
 body{
   margin:0;
   font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
-}
-
-.wrap{
-  max-width:1400px;
-  margin:0 auto;
-  padding:42px 22px 48px;
-}
-
-/* ====== TOP CONTROLS ====== */
-.top{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:18px;
-  margin-bottom:12px;
-}
-
-.cluster{
-  display:flex;
-  gap:12px;
-  align-items:center;
-  flex-wrap:wrap;
-}
-
-.pill{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 14px;
-  border-radius:var(--radiusPill);
-  border:1px solid var(--border);
-  background:var(--pill2);
-  box-shadow:0 10px 30px rgba(15,23,42,.04);
-}
-
-.pill .lbl{
-  font-weight:800;
-  font-size:12px;
-  color:var(--muted);
-  letter-spacing:.2px;
-}
-
-.pill input[type="number"]{
-  width:64px;
-  border:0;
-  outline:0;
-  font-weight:900;
-  font-size:18px;
-  color:var(--ink);
-  background:transparent;
-}
-
-.btn{
-  height:44px;
-  padding:0 18px;
-  border-radius:14px;
-  border:1px solid var(--border);
   background:#fff;
-  font-weight:900;
-  font-size:16px;
   color:var(--ink);
-  cursor:pointer;
-}
-.btn.primary{
-  background:var(--blue);
-  border-color:var(--blue);
-  color:#fff;
-}
-.btn.ghost{
-  color:#b6c1d8;
-  background:#fbfcff;
-}
-.btn:active{ transform:translateY(1px); }
-
-.pill .range{
-  width:260px;
-  accent-color:var(--blue);
 }
 
-/* ====== BOARD ====== */
+.wrap{ max-width:1400px; margin:0 auto; padding:40px 22px; }
+
+/* ===== BOARD ===== */
 .board{
   border:1px solid var(--border);
   border-radius:22px;
   overflow:hidden;
-  background:#fff;
   box-shadow:var(--shadow);
 }
 
-/* header row (sounds + bar numbers + FX title) */
-.headerRow{
+.headerRow,.row{
   display:grid;
-  grid-template-columns: var(--leftW) 1fr var(--fxW);
+  grid-template-columns:var(--leftW) minmax(0,1fr) var(--fxW);
+}
+.headerRow{
   border-bottom:1px solid var(--border);
-  background:#fff;
 }
-
-.hLeft{
-  padding:10px 16px;
-  border-right:1px solid var(--border);
-  font-size:12px;
-  color:var(--muted);
-  font-weight:900;
-}
-
-.hMid{
-  padding:10px 16px;
-  border-right:1px solid var(--border);
-}
-
-.hFx{
+.hLeft,.hMid,.hFx{
   padding:10px 16px;
   font-size:12px;
   font-weight:900;
-  letter-spacing:.3px;
   color:var(--muted);
 }
+.hLeft,.hMid{ border-right:1px solid var(--border); }
 
-/* maatnummers */
+
+
 .bars{
   display:grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns:repeat(4, 1fr);
+  align-items:center;
   gap:0;
   font-weight:900;
   font-size:12px;
   color:var(--muted);
 }
+
 .bars span{
   position:relative;
-  padding-left:12px; /* ruimte voor de lijn */
+  padding-left:12px; /* ruimte voor lijn */
 }
-/* dunne lijn vóór 1, 2, 3 en 4 */
-.bars span::before{
+
+/* gekleurde lijn voor elk maatnummer */
+.bars .b1::before,
+.bars .b2::before,
+.bars .b3::before,
+.bars .b4::before{
   content:"";
   position:absolute;
   left:0;
   top:2px;
   bottom:2px;
-  width:1px;
-  background:var(--line);
+  width:2px;
+  border-radius:2px;
 }
 
-/* rows */
+.bars .b1::before{ background:var(--bar1); }
+.bars .b2::before{ background:var(--bar2); }
+.bars .b3::before{ background:var(--bar3); }
+.bars .b4::before{ background:var(--bar4); }
+
+
+/* ===== ROW ===== */
 .row{
-  display:grid;
-  grid-template-columns: var(--leftW) 1fr var(--fxW);
   min-height:var(--rowH);
   border-bottom:1px solid var(--border2);
 }
 .row:last-child{ border-bottom:0; }
 
-/* ====== LEFT CELL (sound) ====== */
+.leftCell,.midCell,.fxCell,.grid,.soundLine{ min-width:0; }
+
+/* ===== LEFT ===== */
 .leftCell{
+  padding:14px;
   border-right:1px solid var(--border);
-  padding:16px;
   display:grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns:minmax(0,1fr) auto;
   grid-template-rows:auto auto;
   gap:10px 12px;
-  align-items:center;
 }
 
 .soundLine{
   display:flex;
   align-items:center;
-  gap:12px;
+  gap:10px;
   font-weight:900;
-  letter-spacing:.2px;
+  min-width:0;
 }
+
 .dot{
   width:14px;
   height:14px;
   border-radius:50%;
   box-shadow: inset 0 0 0 2px rgba(15,23,42,.08);
+  flex:0 0 auto;
 }
 
+.soundName{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  cursor:text;
+}
+
+/* inline edit input */
+.nameEdit{
+  font:inherit;
+  font-weight:900;
+  border:1px solid var(--border);
+  border-radius:6px;
+  padding:2px 6px;
+  width:100%;
+}
+
+/* controls */
 .smallPills{
   display:flex;
   gap:8px;
+  justify-self:end;
   align-items:center;
+  flex-wrap:wrap;
 }
 
 .sBtn{
@@ -242,136 +171,112 @@ body{
   border-radius:10px;
   border:1px solid var(--border);
   background:#fff;
-  font-weight:900;
   font-size:12px;
-  color:var(--ink);
+  font-weight:900;
   cursor:pointer;
-  line-height:28px;
-}
-.sBtn.icon{
-  width:32px;
-  padding:0;
-  display:grid;
-  place-items:center;
-  font-weight:950;
-}
-.sBtn.disabled{
-  opacity:.35;
-  cursor:not-allowed;
 }
 
+/* BIG delete button */
+.sBtn.delete{
+  width:36px;
+  height:36px;
+  padding:0;
+  font-size:20px;
+  line-height:36px;
+  text-align:center;
+  border-radius:12px;
+}
+
+/* volume */
 .vol{
   grid-column:1 / -1;
-  display:flex;
-  align-items:center;
-  gap:10px;
 }
-.vol input[type="range"]{
-  width:220px;
-  accent-color:#111;
-}
+.vol input[type="range"]{ width:100%; }
 
-/* ====== MID CELL (grid) ====== */
+/* ===== GRID ===== */
 .midCell{
-  border-right:1px solid var(--border);
   padding:10px 16px;
+  border-right:1px solid var(--border);
   display:flex;
   align-items:center;
 }
-
 .grid{
   width:100%;
   display:grid;
-  grid-template-columns: repeat(var(--gridCols), 1fr);
+  grid-template-columns:repeat(var(--gridCols),1fr);
   gap:var(--cellGap);
 }
-
 .step{
-  height:var(--cellH);
-  border-radius:0;               /* rechte vakken zoals screenshot */
-  border:1px solid var(--border);
-  background:#fff;
-  cursor:pointer;
   position:relative;
-  overflow:hidden;
-}
-.step:nth-child(odd){ background:var(--alt2); }
-
-/* dunne maatlijnen in grid vóór maat 2,3,4 (bij steps 5, 9, 13) */
-.step:nth-child(5)::before,
-.step:nth-child(9)::before,
-.step:nth-child(13)::before{
-  content:"";
-  position:absolute;
-  top:0;
-  bottom:0;
-  left:0;
-  width:1px;
-  background:var(--line);
-  pointer-events:none;
+  height:var(--cellH);
+  border:1px solid var(--border);
+  cursor:pointer;
 }
 
-.step.on{
-  background:rgba(59,130,246,.22);
-  border-color:rgba(59,130,246,.55);
+/* Subtiele achtergrond per maat (4 stappen) */
+/* maat 1: stappen 1–4, 17–20, 33–36, ... */
+.step:nth-child(16n+1),
+.step:nth-child(16n+2),
+.step:nth-child(16n+3),
+.step:nth-child(16n+4){
+  background:rgba(59,130,246,.06);
 }
 
-/* ====== FX CELL (right) ====== */
-.fxCell{
-  padding:16px;
-  display:flex;
-  align-items:center;
+/* maat 2: stappen 5–8 */
+.step:nth-child(16n+5),
+.step:nth-child(16n+6),
+.step:nth-child(16n+7),
+.step:nth-child(16n+8){
+  background:rgba(34,197,94,.06);
 }
 
-.fxRow{
-  width:100%;
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
-  align-items:center;
+/* maat 3: stappen 9–12 */
+.step:nth-child(16n+9),
+.step:nth-child(16n+10),
+.step:nth-child(16n+11),
+.step:nth-child(16n+12){
+  background:rgba(168,85,247,.06);
 }
 
+/* maat 4: stappen 13–16 */
+.step:nth-child(16n+13),
+.step:nth-child(16n+14),
+.step:nth-child(16n+15),
+.step:nth-child(16n+16){
+  background:rgba(249,115,22,.06);
+}
+
+
+.step.on{ background:rgba(59,130,246,.22); }
+
+/* ===== FX ===== */
+.fxCell{ padding:16px; display:flex; align-items:center; }
+.fxRow{ width:100%; display:grid; gap:10px; }
 .fx{
   display:grid;
-  grid-template-columns: 44px 1fr; /* vaste labelbreedte */
-  align-items:center;
+  grid-template-columns:44px 1fr;
   gap:10px;
+  align-items:center;
 }
+.fx label{ font-size:11px; font-weight:900; }
+.fx.mix{ color:var(--mix); }
+.fx.fb{ color:var(--fb); }
+.fx.pitch{ color:var(--pitch); }
 
-.fx label{
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.2px;
-  color:var(--ink);
-  white-space:nowrap;
-}
-/* ====== FX SLIDER DEFINITIEF ====== */
 .fx input[type="range"]{
   -webkit-appearance:none;
   appearance:none;
   width:100%;
   height:18px;
   background:transparent;
-  cursor:pointer;
 }
-
-/* TRACK */
 .fx input[type="range"]::-webkit-slider-runnable-track{
   height:8px;
   background:rgba(15,23,42,.12);
   border-radius:999px;
 }
-
-.fx input[type="range"]::-moz-range-track{
-  height:8px;
-  background:rgba(15,23,42,.12);
-  border-radius:999px;
-}
-
-/* THUMB */
 .fx input[type="range"]::-webkit-slider-thumb{
   -webkit-appearance:none;
-  appearance:none;
   width:18px;
   height:18px;
   border-radius:50%;
@@ -379,153 +284,111 @@ body{
   border:2px solid #fff;
   margin-top:-5px;
 }
-
-.fx input[type="range"]::-moz-range-thumb{
-  width:18px;
-  height:18px;
-  border-radius:50%;
-  background:currentColor;
-  border:2px solid #fff;
-}
-
-/* FX kleuren (label + slider accent) */
-.fx.mix label{ color:var(--mix); }
-.fx.fb label{ color:var(--fb); }
-.fx.pitch label{ color:var(--pitch); }
-
-.fx.mix input[type="range"]{ accent-color:var(--mix); }
-.fx.fb input[type="range"]{ accent-color:var(--fb); }
-.fx.pitch input[type="range"]{ accent-color:var(--pitch); }
-
-/* ====== RESPONSIVE (zonder horizontale scroll) ====== */
-@media (max-width: 1180px){
-  :root{ --leftW:300px; --fxW:330px; }
-  .fx input[type="range"]{ width:100px; }
-}
-
-@media (max-width: 980px){
-  .top{ flex-direction:column; align-items:stretch; }
-  .cluster{ justify-content:center; }
-  .pill .range{ width:220px; }
-}
-
-@media (max-width: 880px){
-  /* stack: left + mid + fx onder elkaar */
-  .headerRow{ grid-template-columns:1fr; }
-  .hLeft, .hMid, .hFx{ border-right:0; }
-  .row{ grid-template-columns:1fr; }
-  .leftCell{ border-right:0; border-bottom:1px solid var(--border2); }
-  .midCell{ border-right:0; border-bottom:1px solid var(--border2); }
-  .fxRow{ grid-template-columns:1fr; gap:10px; }
-  .fx input[type="range"]{ width:100%; }
-}
 </style>
 </head>
 
 <body>
 <div class="wrap">
+  <div class="board">
+<div class="headerRow">
+  <div class="hLeft">Sounds</div>
 
-  <div class="top">
-    <div class="cluster">
-      <div class="pill">
-        <span class="lbl">BPM</span>
-        <input id="bpm" type="number" value="124" min="40" max="220">
-      </div>
-
-      <button id="play" class="btn primary">Play</button>
-      <button id="stop" class="btn ghost" disabled>Stop</button>
-      <button id="clear" class="btn">Clear</button>
-    </div>
-
-    <div class="cluster">
-      <div class="pill">
-        <span class="lbl">Volume</span>
-        <input id="master" class="range" type="range" min="0" max="1" step="0.01" value="0.85">
-      </div>
+  <div class="hMid">
+    <div class="bars">
+      <span class="b1">1</span>
+      <span class="b2">2</span>
+      <span class="b3">3</span>
+      <span class="b4">4</span>
     </div>
   </div>
 
-  <!-- Ready verwijderd -->
-
-  <div class="board">
-    <div class="headerRow">
-      <div class="hLeft">Sounds</div>
-      <div class="hMid">
-        <div class="bars"><span>1</span><span>2</span><span>3</span><span>4</span></div>
-      </div>
-      <div class="hFx">FX</div>
-    </div>
-
+  <div class="hFx">FX</div>
+</div>
     <div id="rows"></div>
   </div>
 </div>
 
 <script>
-/* UI-only: rows bouwen + grid toggles (geen audio) */
-const colors = ["#fb7185","#a3e635","#60a5fa","#c084fc","#facc15"]; // zacht zoals design
-const rowsEl = document.getElementById("rows");
-const STEPS = 16;
+const colors=["#fb7185","#a3e635","#60a5fa","#c084fc","#facc15"];
+const rows=document.getElementById("rows");
+const STEPS=16;
 
 function makeRow(i){
-  const row = document.createElement("div");
-  row.className = "row";
-
-  row.innerHTML = `
+  const r=document.createElement("div");
+  r.className="row";
+  r.innerHTML=`
     <div class="leftCell">
       <div class="soundLine">
         <span class="dot" style="background:${colors[i]}"></span>
-        <span>Sound ${i+1}</span>
+        <span class="soundName" data-i="${i}">Sound ${i+1}</span>
       </div>
-
       <div class="smallPills">
         <button class="sBtn">2s</button>
-        <button class="sBtn icon disabled" title="Play (demo)"><span>▶</span></button>
-        <button class="sBtn icon disabled" title="Delete (demo)">×</button>
+        <button class="sBtn">▶</button>
+        <button class="sBtn delete">×</button>
       </div>
-
       <div class="vol">
         <input type="range" min="0" max="1" step="0.01" value="0.8">
       </div>
     </div>
 
     <div class="midCell">
-      <div class="grid" data-row="${i}">
-        ${Array.from({length:STEPS}).map((_,s)=>`<div class="step" data-step="${s}"></div>`).join("")}
+      <div class="grid">
+        ${Array.from({length:STEPS}).map(()=>`<div class="step"></div>`).join("")}
       </div>
     </div>
 
     <div class="fxCell">
       <div class="fxRow">
-        <div class="fx mix">
-          <label>Mix</label>
-          <input type="range" min="0" max="1" step="0.01" value="0.2">
-        </div>
-        <div class="fx fb">
-          <label>FB</label>
-          <input type="range" min="0" max="0.95" step="0.01" value="0.15">
-        </div>
-        <div class="fx pitch">
-          <label>Pitch</label>
-          <input type="range" min="0.5" max="2" step="0.01" value="1">
-        </div>
+        <div class="fx mix"><label>Mix</label><input type="range"></div>
+        <div class="fx fb"><label>FB</label><input type="range"></div>
+        <div class="fx pitch"><label>Pitch</label><input type="range" min="0.5" max="2" step="0.01" value="1"></div>
       </div>
     </div>
   `;
-  return row;
+  return r;
 }
 
-for(let i=0;i<5;i++) rowsEl.appendChild(makeRow(i));
+for(let i=0;i<5;i++) rows.appendChild(makeRow(i));
 
-document.addEventListener("click",(e)=>{
+/* grid toggle */
+document.addEventListener("click",e=>{
   if(e.target.classList.contains("step")){
     e.target.classList.toggle("on");
   }
 });
 
-document.getElementById("clear").addEventListener("click", ()=>{
-  document.querySelectorAll(".step.on").forEach(x=>x.classList.remove("on"));
+/* DOUBLE CLICK TO RENAME */
+document.addEventListener("dblclick",e=>{
+  if(!e.target.classList.contains("soundName")) return;
+
+  const span=e.target;
+  const old=span.textContent;
+
+  const input=document.createElement("input");
+  input.className="nameEdit";
+  input.value=old;
+
+  span.replaceWith(input);
+  input.focus();
+  input.select();
+
+  const save=()=>{
+    const newSpan=document.createElement("span");
+    newSpan.className="soundName";
+    newSpan.textContent=input.value.trim()||old;
+    input.replaceWith(newSpan);
+  };
+
+  input.addEventListener("blur",save);
+  input.addEventListener("keydown",ev=>{
+    if(ev.key==="Enter") save();
+    if(ev.key==="Escape"){
+      input.value=old;
+      save();
+    }
+  });
 });
 </script>
-
 </body>
 </html>
